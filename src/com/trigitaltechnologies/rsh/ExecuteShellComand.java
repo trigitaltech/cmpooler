@@ -14,21 +14,22 @@ public class ExecuteShellComand {
 
 	public static void main(String[] args) {
 		final ExecuteShellComand esc = new ExecuteShellComand();
-		final ResourceBundle resourceBundle = ResourceBundle.getBundle("config");
-
+		//final ResourceBundle resourceBundle = ResourceBundle.getBundle("config");
+		final PropertyManager propertyManager = new PropertyManager();
 		// Task to Run Goes Here
 		Runnable runnable = new Runnable() {
 			public void run() {
-				System.out.println("Process started");
-				for (String cmtsIP : resourceBundle.getString("CMTS_IP").split(",")) {
+				System.out.println("Process Started");
+				for (String cmtsIP : propertyManager.getProp("CMTS_IP").split(",")) {
 					esc.executeCommand("rsh -l root "+cmtsIP+" shcm", cmtsIP);
-					System.out.println("Process started");
+					
 				}
+				System.out.println("Process Ended");
 			}
 		};
 
 		ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
-		service.scheduleAtFixedRate(runnable, 0, 10000, TimeUnit.MILLISECONDS);
+		service.scheduleAtFixedRate(runnable,0,new Long(propertyManager.getProp("TimeInterval")), TimeUnit.MILLISECONDS);
 		
 	}
 
@@ -48,7 +49,7 @@ public class ExecuteShellComand {
 			while ((line = reader.readLine()) != null) {
 				output.append(line + "\n");
 				fileWriter.write(line + System.lineSeparator());
-				System.out.println("+" + line);
+				//System.out.println("+" + line);
 			}
 			fileWriter.flush();
 			fileWriter.close();
